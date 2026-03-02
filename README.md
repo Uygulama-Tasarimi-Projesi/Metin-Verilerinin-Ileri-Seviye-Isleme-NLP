@@ -1,4 +1,4 @@
-## 🧹 Veri Ön İşleme ve Gürültü Temizleme (Data Preprocessing & Noise Reduction)
+##  Veri Ön İşleme ve Gürültü Temizleme (Data Preprocessing & Noise Reduction)
 
 Veri madenciliği ve duygu analizi süreçlerinde ham verinin kalitesi, modelin başarısını doğrudan etkileyen en temel faktördür. Bu aşamada, sosyal medyadan ve çeşitli kaynaklardan toplanan ham metinler, derin öğrenme modelinin (**CNN-LSTM**) odaklanması gereken anlamsal ögeleri (duygu yüklü kelimeler) gölgeleyen "gürültü" bileşenlerinden arındırılmıştır. Temizlik süreci iki ana fazda gerçekleştirilmiştir:
 
