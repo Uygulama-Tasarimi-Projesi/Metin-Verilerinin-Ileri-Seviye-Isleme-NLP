@@ -4,7 +4,7 @@ import jpype
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
-# ZEMBEREK BAŞLAT (JVM Ayarları)
+# ZEMBEREK BAŞLAT
 ZEMBEREK_PATH = "zemberek-full.jar"
 
 if not jpype.isJVMStarted():
@@ -13,7 +13,6 @@ if not jpype.isJVMStarted():
 TurkishMorphology = jpype.JClass("zemberek.morphology.TurkishMorphology")
 morphology = TurkishMorphology.createWithDefaults()
 
-# VERİYİ YÜKLE (Dosya yolunu kendine göre değiştir)
 print("--- VERİ YÜKLENİYOR ---")
 df = pd.read_csv("train_metin.csv")
 
@@ -22,9 +21,9 @@ with open("stop_words.txt", "r", encoding="utf-8") as f:
     stop_words = set(f.read().split())
 
 # GÜVENLİ MORFOLOJİK ANALİZ (Ön İşleme Fonksiyonu)
-# Kural: Sadece çekim eklerini temizle, türetme eklerine dokunma.
-# Lemma alacağız ama sadece lemma kelimeye çok yakınsa kabul edeceğiz.
-# Uzunluk farkı çoksa surface form’u (orijinal halini) koruyacağız.
+# Sadece çekim eklerini temizle, türetme eklerine dokunma.
+# Lemma al ama sadece lemma kelimeye çok yakınsa kabul et
+# Uzunluk farkı çoksa surface formu korur
 def metin_on_isleme(metin):
 
     if not isinstance(metin, str):
@@ -61,7 +60,7 @@ def metin_on_isleme(metin):
 
             # ANLAM KORUMA KURALI
             # Sadece çekim eki varsa lemma kullan
-            # Uzunluk farkı çoksa surface form'u koru
+            # Uzunluk farkı çoksa surface formu koru
             length_diff = len(original) - len(lemma)
 
             if lemma != "UNK" and 0 <= length_diff <= 3:
@@ -81,18 +80,17 @@ print("\n--- METİNLER İŞLENİYOR (Ön İşleme Başladı) ---")
 df["Temiz_Text"] = df["Text"].apply(metin_on_isleme)
 df = df[df["Temiz_Text"].str.strip() != ""]
 
-# TOKENİZASYON (Metinleri Sayılara Dönüştürme)
+# Metinleri Sayılara Dönüştür
 print("\n--- TOKENİZASYON UYGULANIYOR ---")
 tokenizer = Tokenizer(num_words=10000)
 tokenizer.fit_on_texts(df["Temiz_Text"])
 sequences = tokenizer.texts_to_sequences(df["Temiz_Text"])
 
-# PADDING (Sabit Uzunluğa Getirme)
+# Sabit Uzunluğa Getirme
 print("\n--- PADDING UYGULANIYOR ---")
 MAX_UZUNLUK = 50
 X_padded = pad_sequences(sequences, maxlen=MAX_UZUNLUK, padding="post")
 
-# SONUÇLARI KAYDET VE KAPAT
 df.to_csv("temiz_train_metin.csv", index=False, encoding="utf-8")
 
 print("\n--- İŞLEM TAMAMLANDI ---")
